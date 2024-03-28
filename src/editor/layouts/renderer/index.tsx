@@ -1,12 +1,12 @@
 // import component from '../store'
 import { Component } from "../store/types.ts";
-import {Button} from "antd";
 import React, {useEffect, useRef} from "react";
 import {useDrop} from "react-dnd";
 import {ItemType} from "../../item-type.ts";
 import {useComponents} from "../../stores/components.ts";
 import SelectedMask from "../../common/selected-mask.tsx";
 import Space from '../../components/space/index.tsx'
+import Button from "../../components/button";
 
 const ComponentMap: { [key: string]: any } = {
     Button: Button,

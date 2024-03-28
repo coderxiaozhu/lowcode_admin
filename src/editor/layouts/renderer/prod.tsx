@@ -1,7 +1,10 @@
-import React from "react";
-import {Button, Space} from "antd";
+import React, {useRef} from "react";
+import { message } from "antd";
 import {useComponents} from "../../stores/components.ts";
 import {Component} from "../store/types.ts";
+import { componentEventMap } from '../setting/component-event.tsx'
+import Space from "../../components/space";
+import Button from '../../components/button'
 
 const ComponentMap: { [key: string]: any } = {
     Button: Button,
@@ -10,9 +13,39 @@ const ComponentMap: { [key: string]: any } = {
 
 const ProdStage: React.FC = () => {
     const { components } = useComponents()
+    const componentRefs = useRef<any>({})
+    function handleEvent(component: Component) {
+        const props: any = {}
+        if (componentEventMap[component?.name]?.length) {
+            componentEventMap[component?.name]?.forEach(event => {
+                const eventConfig = component?.props[event.name]
+                if (eventConfig) {
+                    const { type, config } = eventConfig;
+                    props[event.name] = () => {
+                        if (type === 'showMessage') {
+                            if (config?.type === 'success') {
+                                message?.success(config?.text)
+                            } else if (config?.type === 'error') {
+                                message?.error(config?.text)
+                            }
+                        } else {
+                            if (type === 'componentFunction') {
+                                const component = componentRefs.current[config.componentId]
+                                if (component) {
+                                    component[config.method]?.()
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        }
+        return props
+    }
     function renderComponents(components: Component[]): React.ReactNode {
         return components.map((component: Component) => {
-            if (!ComponentMap[component.name]) {
+            const props = handleEvent(component)
+            if (!ComponentMap?.[component?.name]) {
                 return null
             }
             if (ComponentMap[component.name]) {
@@ -21,7 +54,12 @@ const ProdStage: React.FC = () => {
                     {
                         key: component.id,
                         id: component.id,
-                        ...component.props
+                        ref: ref => {
+                          componentRefs.current[component.id] = ref
+                        },
+                        'data-component-id': component.id,
+                        ...component.props,
+                        ...props
                     },
                     component.props.children || renderComponents(component.children || [])
                 )
