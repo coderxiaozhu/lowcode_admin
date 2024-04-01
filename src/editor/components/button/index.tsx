@@ -16,7 +16,9 @@ const Button = (props: any, ref: any) => {
         }
     }, [])
     return (
-        <AntdButton loading={loading} {...props}>{ props?.children }</AntdButton>
+        <AntdButton loading={loading} {...props}>
+            { props.text }
+        </AntdButton>
     );
 };
 

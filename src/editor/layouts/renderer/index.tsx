@@ -1,5 +1,5 @@
 // import component from '../store'
-import { Component } from "../store/types.ts";
+import {Component} from "../store/types.ts";
 import React, {useEffect, useRef} from "react";
 import {useDrop} from "react-dnd";
 import {ItemType} from "../../item-type.ts";
@@ -22,11 +22,28 @@ const Renderer: React.FC = () => {
         }
 
     }, [components]);
-    function renderComponents(component: Component[]): React.ReactNode {
-        return component.map((cpn: Component) => {
+    function formatProps(component: Component) {
+        return Object.keys(component.props || {}).reduce<any>((prev, cur) => {
+            if (typeof component.props[cur] === 'object') {
+                if (component.props[cur]?.type === 'static') {
+                    prev[cur] = component.props[cur].value
+                } else if (component.props[cur]?.type === 'variable') {
+                    const variableName = component.props[cur].value
+                    prev[cur] = `\${${variableName}}`;
+                }
+            } else {
+                prev[cur] = component.props[cur]
+            }
+            return prev
+        }, {})
+    }
+
+    function renderComponents(components: Component[]): React.ReactNode {
+        return components.map((cpn: Component) => {
             if (!ComponentMap[cpn.name]) {
                 return null
             }
+            const props = formatProps(cpn)
             if (ComponentMap[cpn.name]) {
                 return React.createElement(
                     ComponentMap[cpn.name],
@@ -35,14 +52,15 @@ const Renderer: React.FC = () => {
                         id: cpn.id,
                         "data-component-id": cpn.id,
                         ...cpn.props,
+                        ...props,
                     },
                     // 是否有嵌套组件,没有的话就显示内容
                     cpn.props.children || renderComponents(cpn.children || [])
                 );
             }
+            return null
         })
     }
-
     // 如果拖拽的组件是可以放置的，canDrop则为true，通过这个可以给组件添加边框
     const [{ canDrop }, drop] = useDrop(() => ({
         // 可以接受的元素类型
@@ -92,7 +110,9 @@ const Renderer: React.FC = () => {
     }, [])
     return (
         <div ref={drop} style={{ border: canDrop ? '1px solid #ccc' : 'none' }} className='p-4 h-full stage'>
-            {renderComponents(components)}
+            <React.Suspense fallback='loading...'>
+                {renderComponents(components)}
+            </React.Suspense>
             {curComponentId && (
                 <SelectedMask
                     componentId={curComponentId}

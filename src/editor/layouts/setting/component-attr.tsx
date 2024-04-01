@@ -1,7 +1,8 @@
 import {ItemType} from "../../item-type.ts";
 import {useComponents} from "../../stores/components.ts";
-import {Form, Input, Select} from "antd";
+import {Form, Select} from "antd";
 import {useEffect} from "react";
+import SettingFormItemInput from "../../common/setting-form-item/input.tsx";
 
 const componentSettingMap = {
     [ItemType.Button]: [
@@ -20,45 +21,45 @@ const componentSettingMap = {
                 }
             ]
         },
-        {
-            name: 'disabled',
-            label: '是否禁用',
-            type: 'select',
-            options: [
-                {
-                    label: '禁用',
-                    value: true
-                },
-                {
-                    label: '不禁用',
-                    value: false
-                }
-            ]
-        },
+        // {
+        //     name: 'disabled',
+        //     label: '是否禁用',
+        //     type: 'select',
+        //     options: [
+        //         {
+        //             label: '禁用',
+        //             value: true
+        //         },
+        //         {
+        //             label: '不禁用',
+        //             value: false
+        //         }
+        //     ]
+        // },
         {
             name: 'text',
             label: '文本',
             type: 'input'
         },
-        {
-            name: 'size',
-            label: '按钮大小',
-            type: 'select',
-            options: [
-                {
-                    label: '大',
-                    value: 'large'
-                },
-                {
-                    label: '中',
-                    value: 'middle'
-                },
-                {
-                    label: '小',
-                    value: 'small'
-                }
-            ]
-        }
+        // {
+        //     name: 'size',
+        //     label: '按钮大小',
+        //     type: 'select',
+        //     options: [
+        //         {
+        //             label: '大',
+        //             value: 'large'
+        //         },
+        //         {
+        //             label: '中',
+        //             value: 'middle'
+        //         },
+        //         {
+        //             label: '小',
+        //             value: 'small'
+        //         }
+        //     ]
+        // }
     ],
     [ItemType.Space]: [
         {
@@ -98,7 +99,7 @@ const ComponentAttr = () => {
         if (type === 'select') {
             return <Select options={options} />
         } else if (type === 'input') {
-            return <Input />
+            return <SettingFormItemInput />
         }
     }
     /**

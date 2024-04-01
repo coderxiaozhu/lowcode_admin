@@ -18,7 +18,7 @@ const ComponentItem: React.FC<ComponentItemProps> = ({ name, description, onDrag
             if (!dropResult) return;
             onDragEnd && onDragEnd({
                 name,
-                props: name === ItemType.Button ? { children: '按钮' } : { },
+                props: name === ItemType.Button ? { text: '按钮' } : { },
                 ...dropResult
             })
         },
