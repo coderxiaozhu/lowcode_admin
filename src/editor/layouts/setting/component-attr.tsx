@@ -81,6 +81,13 @@ const componentSettingMap = {
                 }
             ]
         }
+    ],
+    [ItemType.RemoteComponent]: [
+        {
+            name: 'text',
+            label: '文本',
+            type: 'input'
+        }
     ]
 }
 const ComponentAttr = () => {

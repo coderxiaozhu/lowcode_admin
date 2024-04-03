@@ -7,10 +7,13 @@ import Space from "../../components/space";
 import Button from '../../components/button'
 import {useVariableStore} from "../../stores/variable.ts";
 import {usePageDataStore} from "../store/page-data.ts";
+import {ItemType} from "../../item-type.ts";
+import {loadRemoteComponent} from "../../utils/utils.ts";
 
 const ComponentMap: { [key: string]: any } = {
     Button: Button,
-    Space: Space
+    Space: Space,
+    [ItemType.RemoteComponent]: React.lazy(() => loadRemoteComponent('https://cdn.jsdelivr.net/npm/xiaozhu-remote-component@1.0.2/dist/bundle.umd.js'))
 }
 
 const ProdStage: React.FC = () => {
@@ -108,9 +111,11 @@ const ProdStage: React.FC = () => {
         })
     }
     return (
-        <>
-            { renderComponents(components) }
-        </>
+        <div>
+            <React.Suspense fallback='loading...'>
+                { renderComponents(components) }
+            </React.Suspense>
+        </div>
     );
 };
 

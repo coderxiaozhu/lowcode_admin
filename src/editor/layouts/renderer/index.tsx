@@ -1,4 +1,3 @@
-// import component from '../store'
 import {Component} from "../store/types.ts";
 import React, {useEffect, useRef} from "react";
 import {useDrop} from "react-dnd";
@@ -7,10 +6,12 @@ import {useComponents} from "../../stores/components.ts";
 import SelectedMask from "../../common/selected-mask.tsx";
 import Space from '../../components/space/index.tsx'
 import Button from "../../components/button";
+import {loadRemoteComponent} from "../../utils/utils.ts";
 
 const ComponentMap: { [key: string]: any } = {
     Button: Button,
-    Space: Space
+    Space: Space,
+    [ItemType.RemoteComponent]: React.lazy(() => loadRemoteComponent('https://cdn.jsdelivr.net/npm/xiaozhu-remote-component@1.0.2/dist/bundle.umd.js'))
 }
 
 const Renderer: React.FC = () => {
@@ -66,7 +67,8 @@ const Renderer: React.FC = () => {
         // 可以接受的元素类型
         accept: [
             ItemType.Space,
-            ItemType.Button
+            ItemType.Button,
+            ItemType.RemoteComponent
         ],
         drop: (_, monitor) => {
             const didDrop = monitor.didDrop()
